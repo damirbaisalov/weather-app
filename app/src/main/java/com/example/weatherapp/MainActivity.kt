@@ -13,8 +13,6 @@ import com.example.weatherapp.screens.*
 
 class MainActivity : ComponentActivity() {
 
-    val vm: MainViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

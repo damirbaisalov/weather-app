@@ -9,6 +9,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.weatherapp.data.models.WeatherApiData
@@ -16,7 +17,7 @@ import com.example.weatherapp.data.models.WeatherApiState
 
 class MainFragment : Fragment() {
 
-    private lateinit var vm: MainFragmentViewModel
+    private  val vm: MainFragmentViewModel by viewModels()
 
     private lateinit var progressBar: ProgressBar
     private lateinit var cityName: TextView
@@ -28,9 +29,7 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        vm = ViewModelProvider(requireActivity())[MainFragmentViewModel::class.java]
-
-//        vm.getCurrentWeather2()
+        vm.getCurrentWeather2()
 
         lifecycleScope.launchWhenStarted {
             vm.weatherApiState.collect {

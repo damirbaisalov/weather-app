@@ -28,9 +28,9 @@ class MainFragmentViewModel : ViewModel() {
 //        progressLiveData.value = false
 //    }
 
-    init {
-        getCurrentWeather2()
-    }
+//    init {
+//        getCurrentWeather2()
+//    }
 
     fun getCurrentWeather2() {
 

@@ -1,5 +1,6 @@
 package com.example.weatherapp.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -7,19 +8,25 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.weatherapp.NavRoutes
+import com.example.weatherapp.R
 
 @Composable
-fun Home(navController: NavHostController) {
+fun FirstScreen(navController: NavHostController) {
 
-    var userName by remember { mutableStateOf("") }
-    val onUserNameChange = { text : String ->
-        userName = text
+    val context = LocalContext.current
+    var cityName by remember { mutableStateOf("") }
+    val onCityNameChange = { text : String ->
+        cityName = text
     }
 
     Box(
@@ -28,25 +35,36 @@ fun Home(navController: NavHostController) {
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            
+            
+            Image(
+                painter = painterResource(id = R.drawable.cloudy),
+                contentDescription = "cloudy",
+                modifier = Modifier
+                    .size(100.dp)
+            )
+            
+            Spacer(modifier = Modifier.height(20.dp))
+
             CustomTextField(
-                title = "Enter your name",
-                textState = userName,
-                onTextChange = onUserNameChange
+                title = "Enter city name",
+                textState = cityName,
+                onTextChange = onCityNameChange
             )
 
             Spacer(modifier = Modifier.size(30.dp))
 
             Button(
                 onClick = {
-                    navController.navigate(NavRoutes.Welcome.route + "/$userName")
+                    if (!cityName.isNullOrBlank())
+                        navController.navigate(NavRoutes.SecondScreen.route + "/$cityName")
+                    else
+                       showToast(context = context, "Enter CityName")
                 },
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Blue
-                ),
-                shape = RoundedCornerShape(10.dp)
+                shape = RoundedCornerShape(5.dp)
             ) {
                 Text(
-                    text = "Register",
+                    text = "Find weather",
                     color = Color.White
                 )
             }
@@ -69,4 +87,10 @@ fun CustomTextField(
         textStyle = TextStyle(fontWeight = FontWeight.Bold,
             fontSize = 30.sp)
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun FirstScreenPreview() {
+    FirstScreen(navController = rememberNavController())
 }

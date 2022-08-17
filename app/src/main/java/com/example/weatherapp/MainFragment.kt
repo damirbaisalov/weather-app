@@ -12,12 +12,15 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.example.weatherapp.data.ApiRetrofit
 import com.example.weatherapp.data.models.WeatherApiData
 import com.example.weatherapp.data.models.WeatherApiState
+import com.example.weatherapp.repository.MainRepository
 
 class MainFragment : Fragment() {
 
-    private  val vm: MainFragmentViewModel by viewModels()
+//    private val mainRepository by lazy(LazyThreadSafetyMode.NONE) {MainRepository(apiRetrofit = ApiRetrofit)}
+    private val vm: MainFragmentViewModel by viewModels()
 
     private lateinit var progressBar: ProgressBar
     private lateinit var cityName: TextView

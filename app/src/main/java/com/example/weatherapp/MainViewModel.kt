@@ -1,16 +1,36 @@
 package com.example.weatherapp
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.weatherapp.data.models.WeatherApiData
+import androidx.lifecycle.viewModelScope
+import com.example.weatherapp.data.ApiRetrofit
+import com.example.weatherapp.data.models.WeatherApiState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainViewModel: ViewModel() {
 
-//    private val _weatherApiState = MutableStateFlow<WeatherApiState>(WeatherApiState.Empty)
-//    val weatherApiState: StateFlow<WeatherApiState> = _weatherApiState
+    private val _weatherApiState = MutableStateFlow<WeatherApiState>(WeatherApiState.Empty)
+    val weatherApiState: StateFlow<WeatherApiState> = _weatherApiState
 
-    var weatherApiData: WeatherApiData by mutableStateOf()
+    init {
+        getCurrentWeather()
+    }
+
+    private fun getCurrentWeather() = viewModelScope.launch {
+
+        _weatherApiState.value = WeatherApiState.Loading
+
+        withContext(Dispatchers.IO) {
+            try {
+                val weatherApiData = ApiRetrofit.getApiClient().getCurrentWeather()
+                _weatherApiState.value = WeatherApiState.Success(weatherApiData)
+            } catch (e: Exception) {
+                _weatherApiState.value = WeatherApiState.Error(e.message.toString())
+            }
+        }
+    }
 
 }

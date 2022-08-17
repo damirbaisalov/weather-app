@@ -1,0 +1,34 @@
+package com.example.weatherapp
+
+import androidx.lifecycle.*
+import com.example.weatherapp.data.ApiRetrofit
+import com.example.weatherapp.data.models.WeatherApiState
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
+
+class MainViewModel : ViewModel() {
+
+    private val _weatherApiState = MutableStateFlow<WeatherApiState>(WeatherApiState.Empty)
+    val weatherApiState: StateFlow<WeatherApiState> = _weatherApiState
+
+    init {
+        getCurrentWeather()
+    }
+
+    private fun getCurrentWeather() {
+
+        viewModelScope.launch {
+
+            _weatherApiState.value = WeatherApiState.Loading
+
+            withContext(Dispatchers.IO) {
+                try {
+                    val weatherApiData = ApiRetrofit.getApiClient().getCurrentWeather()
+                    _weatherApiState.value = WeatherApiState.Success(weatherApiData)
+                } catch (e: Exception) {
+                    _weatherApiState.value = WeatherApiState.Error(e.message.toString())
+                }
+            }
+        }
+    }
+}

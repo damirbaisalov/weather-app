@@ -10,7 +10,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.weatherapp.data.models.WeatherApiData
+import com.example.weatherapp.data.models.WeatherApiState
 
 class MainFragment : Fragment() {
 
@@ -28,15 +30,30 @@ class MainFragment : Fragment() {
 
         vm = ViewModelProvider(requireActivity())[MainFragmentViewModel::class.java]
 
-        vm.getResultProgressData.observe(requireActivity()) {
-            progressBar.isVisible = it
-        }
-
-//        vm.getCurrentWeatherIO()
         vm.getCurrentWeatherMain()
 
-        vm.getResultWeatherData.observe(requireActivity(), ::showResult)
-//        Toast.makeText(requireContext(), vm.getResultWeatherData.value.toString(), Toast.LENGTH_LONG).show()
+        lifecycleScope.launchWhenStarted {
+            vm.weatherApiState.collect {
+                when(it) {
+                    is WeatherApiState.Success -> {
+                        bindData(it.data)
+                        progressBar.isVisible = false
+                    }
+                    is WeatherApiState.Error -> {
+                        Toast.makeText(
+                            requireContext(),
+                            it.msg,
+                            Toast.LENGTH_LONG
+                        ).show()
+                        progressBar.isVisible = false
+                    }
+                    is WeatherApiState.Loading -> {
+                        progressBar.isVisible = true
+                    }
+                    else -> Unit
+                }
+            }
+        }
 
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
@@ -51,10 +68,6 @@ class MainFragment : Fragment() {
         countryName = view?.findViewById(R.id.country_name)!!
         temp = view?.findViewById(R.id.temp)!!
         progressBar = view?.findViewById(R.id.progress_bar)!!
-    }
-
-    private fun showResult(weatherApiData: WeatherApiData) {
-        bindData(weatherApiData = weatherApiData)
     }
 
     private fun bindData(weatherApiData: WeatherApiData) {

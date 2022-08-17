@@ -1,53 +1,48 @@
 package com.example.weatherapp
 
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.weatherapp.data.ApiRetrofit
-import com.example.weatherapp.data.models.WeatherApiData
+import com.example.weatherapp.data.models.WeatherApiState
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.Dispatcher
-import java.lang.Exception
 
 class MainFragmentViewModel : ViewModel() {
 
-    private val progressLiveData = MutableLiveData<Boolean>()
-    val getResultProgressData: LiveData<Boolean> = progressLiveData
 
-    private val resultWeatherLiveData = MutableLiveData<WeatherApiData>()
-    val getResultWeatherData: LiveData<WeatherApiData> = resultWeatherLiveData
+    private val _weatherApiState = MutableStateFlow<WeatherApiState>(WeatherApiState.Empty)
+    val weatherApiState: StateFlow<WeatherApiState> = _weatherApiState
 
-    fun getCurrentWeatherIO() {
-
-        progressLiveData.value = true
-
-        viewModelScope.launch(Dispatchers.IO) {
-            val response = ApiRetrofit.getApiClient().getCurrentWeather()
-            if (response.isSuccessful) {
-                resultWeatherLiveData.postValue(response.body())
-            }
-        }
-
-        progressLiveData.value = false
-    }
+//    fun getCurrentWeatherIO() {
+//
+//        progressLiveData.value = true
+//
+//        viewModelScope.launch(Dispatchers.IO) {
+//            val response = ApiRetrofit.getApiClient().getCurrentWeather()
+//            if (response.isSuccessful) {
+//                resultWeatherLiveData.postValue(response.body())
+//            }
+//        }
+//
+//        progressLiveData.value = false
+//    }
 
     fun getCurrentWeatherMain() {
 
         viewModelScope.launch(Dispatchers.Main) {
 
-            progressLiveData.value = true
+            _weatherApiState.value = WeatherApiState.Loading
 
-            val response = withContext(Dispatchers.IO) {
-                ApiRetrofit.getApiClient().getCurrentWeather()
+            withContext(Dispatchers.IO) {
+                try {
+                    val weatherApiData = ApiRetrofit.getApiClient().getCurrentWeather()
+                    _weatherApiState.value = WeatherApiState.Success(weatherApiData)
+                } catch (e: Exception) {
+                    _weatherApiState.value = WeatherApiState.Error(e.message.toString())
+                }
             }
-
-            if (response.isSuccessful) {
-                resultWeatherLiveData.value = response.body()
-            }
-
-            progressLiveData.value = false
         }
     }
 }

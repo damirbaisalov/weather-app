@@ -28,6 +28,10 @@ class MainFragmentViewModel : ViewModel() {
 //        progressLiveData.value = false
 //    }
 
+    init {
+        getCurrentWeather2()
+    }
+
     fun getCurrentWeather2() {
 
         viewModelScope.launch(Dispatchers.Main) {

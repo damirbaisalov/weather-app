@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainFragmentViewModel : ViewModel() {
+class MainViewModel : ViewModel() {
 
     private val _weatherApiState = MutableStateFlow<WeatherApiState>(WeatherApiState.Empty)
     val weatherApiState: StateFlow<WeatherApiState> = _weatherApiState

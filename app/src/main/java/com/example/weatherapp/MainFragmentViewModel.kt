@@ -4,8 +4,7 @@ import androidx.lifecycle.*
 import com.example.weatherapp.data.ApiRetrofit
 import com.example.weatherapp.data.models.WeatherApiState
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -29,7 +28,7 @@ class MainFragmentViewModel : ViewModel() {
 //        progressLiveData.value = false
 //    }
 
-    fun getCurrentWeatherMain() {
+    fun getCurrentWeather2() {
 
         viewModelScope.launch(Dispatchers.Main) {
 
@@ -42,6 +41,22 @@ class MainFragmentViewModel : ViewModel() {
                 } catch (e: Exception) {
                     _weatherApiState.value = WeatherApiState.Error(e.message.toString())
                 }
+            }
+        }
+    }
+
+    fun getCurrentWeather3() {
+
+        viewModelScope.launch(Dispatchers.Main) {
+
+            _weatherApiState.value = WeatherApiState.Loading
+
+            flow {
+                emit(ApiRetrofit.getApiClient().getCurrentWeather())
+            }.flowOn(Dispatchers.IO).catch { e ->
+                _weatherApiState.value = WeatherApiState.Error(e.message.toString())
+            }.collect { data ->
+                _weatherApiState.value = WeatherApiState.Success(data)
             }
         }
     }

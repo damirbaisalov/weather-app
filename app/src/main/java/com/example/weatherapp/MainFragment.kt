@@ -30,7 +30,7 @@ class MainFragment : Fragment() {
 
         vm = ViewModelProvider(requireActivity())[MainFragmentViewModel::class.java]
 
-        vm.getCurrentWeatherMain()
+        vm.getCurrentWeather2()
 
         lifecycleScope.launchWhenStarted {
             vm.weatherApiState.collect {

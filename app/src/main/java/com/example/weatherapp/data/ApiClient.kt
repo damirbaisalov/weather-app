@@ -1,5 +1,6 @@
 package com.example.weatherapp.data
 
+import com.example.weatherapp.data.ApiRetrofit.API_KEY
 import com.example.weatherapp.data.models.WeatherApiData
 import retrofit2.Response
 import retrofit2.http.GET

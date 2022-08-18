@@ -1,11 +1,13 @@
 package com.example.weatherapp.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -19,15 +21,27 @@ import com.example.weatherapp.data.models.WeatherApiState
 @Composable
 fun SecondScreen(navController: NavHostController, cityName: String?, mainViewModel: MainViewModel = viewModel()) {
 
+    val viewState = mainViewModel.weatherApiState.collectAsState()
+
+    LaunchedEffect(key1 = Unit, block = {
+        mainViewModel.getCurrentWeather()
+        Log.e("get", "API CALLED")
+    } )
+
+    SideEffect {
+        Log.e("TAG","$viewState")
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            when(val state = mainViewModel.weatherApiState.collectAsState().value) {
+            when(val state = viewState.value) {
                 is WeatherApiState.Empty -> Text(
-                    text = "Empty"
+                    text = "Empty state occurred"
                 )
                 is WeatherApiState.Loading ->
                     Column(
@@ -38,7 +52,7 @@ fun SecondScreen(navController: NavHostController, cityName: String?, mainViewMo
                         CircularProgressIndicator()
                     }
                 is WeatherApiState.Success -> WeatherLoaded(navController = navController, state.data)
-                is WeatherApiState.Error -> ErrorDialog(message = state.msg)
+                is WeatherApiState.Error -> ErrorMessage(message = state.msg, navController)
             }
         }
     }
@@ -46,6 +60,8 @@ fun SecondScreen(navController: NavHostController, cityName: String?, mainViewMo
 
 @Composable
 fun WeatherLoaded(navController: NavHostController, data: WeatherApiData) {
+    var num by remember { mutableStateOf(1) }
+
     Row {
         Text(text = "City: ", style = MaterialTheme.typography.h6)
         Text(text = data.location.name, style = MaterialTheme.typography.h6)
@@ -70,11 +86,11 @@ fun WeatherLoaded(navController: NavHostController, data: WeatherApiData) {
 
     Button(
         onClick = {
-            navController.navigate(NavRoutes.FirstScreen.route)
+            num++
         },
         shape = RoundedCornerShape(5.dp)
     ) {
-        Text(text = "Find weather")
+        Text(text = "$num")
     }
 
     Spacer(modifier = Modifier.size(10.dp))
@@ -90,23 +106,40 @@ fun WeatherLoaded(navController: NavHostController, data: WeatherApiData) {
 }
 
 @Composable
-fun ErrorDialog(message: String) {
-    val openDialog = remember { mutableStateOf(true) }
-    if (openDialog.value) {
-        AlertDialog(
-            onDismissRequest = {
-                openDialog.value = false
-            },
-            title = {
-                Text(text = "Error occurred")
-            },
-            text = {
-                Text(message)
-            },
-            confirmButton = {
-                openDialog.value = false
+fun ErrorMessage(message: String, navController: NavHostController) {
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+                .padding(horizontal = 50.dp),
+            elevation = 4.dp,
+            shape = RoundedCornerShape(6.dp),
+            ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = message,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Button(
+                    onClick = {
+                        navController.navigate(NavRoutes.FirstScreen.route)
+                }) {
+                    Text(text = "Refresh")
+                }
             }
-        )
+
+        }
     }
 }
 

@@ -15,11 +15,7 @@ class MainViewModel: ViewModel() {
     private val _weatherApiState = MutableStateFlow<WeatherApiState>(WeatherApiState.Empty)
     val weatherApiState: StateFlow<WeatherApiState> = _weatherApiState
 
-    init {
-        getCurrentWeather()
-    }
-
-    private fun getCurrentWeather() = viewModelScope.launch {
+    fun getCurrentWeather() = viewModelScope.launch {
 
         _weatherApiState.value = WeatherApiState.Loading
 

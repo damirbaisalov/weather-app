@@ -36,7 +36,6 @@ fun FirstScreen(navController: NavHostController) {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             
-            
             Image(
                 painter = painterResource(id = R.drawable.cloudy),
                 contentDescription = "cloudy",
@@ -56,7 +55,7 @@ fun FirstScreen(navController: NavHostController) {
 
             Button(
                 onClick = {
-                    if (!cityName.isNullOrBlank())
+                    if (cityName.isNotBlank())
                         navController.navigate(NavRoutes.SecondScreen.route + "/$cityName")
                     else
                        showToast(context = context, "Enter CityName")

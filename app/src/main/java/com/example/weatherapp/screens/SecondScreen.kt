@@ -24,7 +24,7 @@ fun SecondScreen(navController: NavHostController, cityName: String?, mainViewMo
     val viewState = mainViewModel.weatherApiState.collectAsState()
 
     LaunchedEffect(key1 = Unit, block = {
-        mainViewModel.getCurrentWeather()
+        mainViewModel.getCurrentWeather(cityName = cityName.toString())
         Log.e("get", "API CALLED")
     } )
 

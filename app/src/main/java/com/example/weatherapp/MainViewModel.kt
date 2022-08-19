@@ -15,13 +15,16 @@ class MainViewModel: ViewModel() {
     private val _weatherApiState = MutableStateFlow<WeatherApiState>(WeatherApiState.Empty)
     val weatherApiState: StateFlow<WeatherApiState> = _weatherApiState
 
-    fun getCurrentWeather() = viewModelScope.launch {
+    fun getCurrentWeather(cityName: String) = viewModelScope.launch {
 
         _weatherApiState.value = WeatherApiState.Loading
 
         withContext(Dispatchers.IO) {
             try {
-                val weatherApiData = ApiRetrofit.getApiClient().getCurrentWeather()
+                val weatherApiData = ApiRetrofit.getApiClient().getCurrentWeather(
+                    key = ApiRetrofit.API_KEY,
+                    cityName = cityName
+                )
                 _weatherApiState.value = WeatherApiState.Success(weatherApiData)
             } catch (e: Exception) {
                 _weatherApiState.value = WeatherApiState.Error(e.message.toString())

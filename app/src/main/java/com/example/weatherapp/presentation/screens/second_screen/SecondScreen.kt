@@ -1,4 +1,4 @@
-package com.example.weatherapp.screens
+package com.example.weatherapp.presentation.screens.second_screen
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
@@ -13,18 +13,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.weatherapp.MainViewModel
-import com.example.weatherapp.NavRoutes
+import com.example.weatherapp.presentation.NavRoutes
 import com.example.weatherapp.data.models.current_weather.WeatherApiData
-import com.example.weatherapp.data.models.current_weather.WeatherApiState
+import com.example.weatherapp.domain.models.WeatherCurrentData
 
 @Composable
-fun SecondScreen(navController: NavHostController, cityName: String?, mainViewModel: MainViewModel = viewModel()) {
+fun SecondScreen(navController: NavHostController, cityName: String?, secondScreenViewModel: SecondScreenViewModel = viewModel()) {
 
-    val viewState = mainViewModel.weatherApiState.collectAsState()
+    val viewState = secondScreenViewModel.weatherCurrentUiState.collectAsState()
 
     LaunchedEffect(key1 = Unit, block = {
-        mainViewModel.getCurrentWeather(cityName = cityName.toString())
+        secondScreenViewModel.getCurrentWeather(cityName = cityName.toString())
     } )
 
     SideEffect {
@@ -39,10 +38,10 @@ fun SecondScreen(navController: NavHostController, cityName: String?, mainViewMo
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             when(val state = viewState.value) {
-                is WeatherApiState.Empty -> Text(
+                is WeatherCurrentUiState.Empty -> Text(
                     text = "Empty state occurred"
                 )
-                is WeatherApiState.Loading ->
+                is WeatherCurrentUiState.Loading ->
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
@@ -50,27 +49,27 @@ fun SecondScreen(navController: NavHostController, cityName: String?, mainViewMo
                     ) {
                         CircularProgressIndicator()
                     }
-                is WeatherApiState.Success -> WeatherLoaded(navController = navController, state.data)
-                is WeatherApiState.Error -> ErrorMessage(message = state.msg, navController)
+                is WeatherCurrentUiState.Success -> WeatherLoaded(navController = navController,  state.data)
+                is WeatherCurrentUiState.Error -> ErrorMessage(message = state.msg, navController)
             }
         }
     }
 }
 
 @Composable
-fun WeatherLoaded(navController: NavHostController, data: WeatherApiData) {
+fun WeatherLoaded(navController: NavHostController, data: WeatherCurrentData) {
     var num by remember { mutableStateOf(1) }
 
     Row {
         Text(text = "City: ", style = MaterialTheme.typography.h6)
-        Text(text = data.location.name, style = MaterialTheme.typography.h6)
+        Text(text = data.name, style = MaterialTheme.typography.h6)
     }
 
     Spacer(modifier = Modifier.size(10.dp))
 
     Row {
         Text(text = "Country: ", style = MaterialTheme.typography.h6)
-        Text(text = data.location.country, style = MaterialTheme.typography.h6)
+        Text(text = data.country, style = MaterialTheme.typography.h6)
     }
 
     Spacer(modifier = Modifier.size(10.dp))
@@ -78,7 +77,7 @@ fun WeatherLoaded(navController: NavHostController, data: WeatherApiData) {
     Row {
 
         Text(text = "Temp: ", style = MaterialTheme.typography.h6)
-        Text(text = data.current.temp_c.toString(), style = MaterialTheme.typography.h6)
+        Text(text = data.temp_c, style = MaterialTheme.typography.h6)
     }
 
     Spacer(modifier = Modifier.size(30.dp))
@@ -96,7 +95,7 @@ fun WeatherLoaded(navController: NavHostController, data: WeatherApiData) {
 
     Button(
         onClick = {
-            navController.navigate(NavRoutes.ThirdScreen.route+ "/${data.location.name}")
+            navController.navigate(NavRoutes.ThirdScreen.route+ "/${data.name}")
         },
         shape = RoundedCornerShape(5.dp)
     ) {

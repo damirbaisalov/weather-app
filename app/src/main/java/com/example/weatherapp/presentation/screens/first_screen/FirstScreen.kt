@@ -1,4 +1,4 @@
-package com.example.weatherapp.screens
+package com.example.weatherapp.presentation.screens.first_screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -17,8 +17,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.weatherapp.NavRoutes
+import com.example.weatherapp.presentation.NavRoutes
 import com.example.weatherapp.R
+import com.example.weatherapp.presentation.screens.third_screen.showToast
 
 @Composable
 fun FirstScreen(navController: NavHostController) {

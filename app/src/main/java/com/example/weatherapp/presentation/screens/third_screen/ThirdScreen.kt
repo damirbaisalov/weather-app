@@ -1,4 +1,4 @@
-package com.example.weatherapp.screens
+package com.example.weatherapp.presentation.screens.third_screen
 
 import android.content.Context
 import android.util.Log
@@ -16,17 +16,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.weatherapp.MainViewModel
-import com.example.weatherapp.data.models.forecast_weather.WeatherForecastApiState
-import com.example.weatherapp.data.models.forecast_weather.WeatherForecastDayDetailsApiData
+import com.example.weatherapp.domain.models.WeatherForecastData
+import com.example.weatherapp.presentation.screens.second_screen.ErrorMessage
 
 @Composable
-fun ThirdScreen(navController: NavHostController, cityName: String, mainViewModel: MainViewModel = viewModel()) {
+fun ThirdScreen(navController: NavHostController, cityName: String, thirdScreenViewModel: ThirdScreenViewModel = viewModel()) {
 
-    val viewState = mainViewModel.weatherForeCastApiState.collectAsState()
+    val viewState = thirdScreenViewModel.weatherForeCastUiState.collectAsState()
 
     LaunchedEffect(key1 = Unit, block = {
-        mainViewModel.getForecastWeather(
+        thirdScreenViewModel.getForecastWeather(
             cityName = cityName,
             days = "7"
         )
@@ -43,12 +42,12 @@ fun ThirdScreen(navController: NavHostController, cityName: String, mainViewMode
         contentAlignment = Alignment.Center
     ) {
         when(val state = viewState.value) {
-            is WeatherForecastApiState.Empty -> Text(
+            is WeatherForecastUiState.Empty -> Text(
                 text = "Empty state occurred"
             )
-            is WeatherForecastApiState.Loading -> Loading()
-            is WeatherForecastApiState.Success -> ForecastLoaded(weatherForecastDayDetailList = state.data)
-            is WeatherForecastApiState.Error -> ErrorMessage(
+            is WeatherForecastUiState.Loading -> Loading()
+            is WeatherForecastUiState.Success -> ForecastLoaded(weatherForecastDataList = state.data)
+            is WeatherForecastUiState.Error -> ErrorMessage(
                                                     message = state.msg,
                                                     navController = navController
                                                 )
@@ -58,12 +57,12 @@ fun ThirdScreen(navController: NavHostController, cityName: String, mainViewMode
 }
 
 @Composable
-fun ForecastLoaded(weatherForecastDayDetailList: List<WeatherForecastDayDetailsApiData>) {
+fun ForecastLoaded(weatherForecastDataList: List<WeatherForecastData>) {
 
     val context = LocalContext.current
 
     LazyColumn {
-        for (weatherForecastDayDetail in weatherForecastDayDetailList) {
+        for (weatherForecastData in weatherForecastDataList) {
             item {
                     Card(
                         elevation = 8.dp,
@@ -72,7 +71,7 @@ fun ForecastLoaded(weatherForecastDayDetailList: List<WeatherForecastDayDetailsA
                             .padding(horizontal = 50.dp, vertical = 5.dp)
                             .fillMaxWidth()
                             .clickable {
-                                showToast(context, weatherForecastDayDetail.toString())
+                                showToast(context, weatherForecastData.toString())
                             }
                     ) {
                         Row(
@@ -83,7 +82,7 @@ fun ForecastLoaded(weatherForecastDayDetailList: List<WeatherForecastDayDetailsA
                                 modifier = Modifier
                                     .padding(10.dp)
                                     .padding(start = 20.dp),
-                                text = weatherForecastDayDetail.date,
+                                text = weatherForecastData.date,
                                 textAlign = TextAlign.Start
                             )
                             
@@ -93,7 +92,7 @@ fun ForecastLoaded(weatherForecastDayDetailList: List<WeatherForecastDayDetailsA
                                 modifier = Modifier
                                     .padding(10.dp)
                                     .padding(end = 20.dp),
-                                text = weatherForecastDayDetail.day.avgTempC.toString(),
+                                text = weatherForecastData.avgTempC,
                                 textAlign = TextAlign.End
                             )
                         }

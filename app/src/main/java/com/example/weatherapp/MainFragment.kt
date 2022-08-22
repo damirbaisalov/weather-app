@@ -11,8 +11,8 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.weatherapp.data.models.WeatherApiData
-import com.example.weatherapp.data.models.WeatherApiState
+import com.example.weatherapp.data.models.current_weather.WeatherApiData
+import com.example.weatherapp.data.models.current_weather.WeatherApiState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 

@@ -15,8 +15,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.weatherapp.MainViewModel
 import com.example.weatherapp.NavRoutes
-import com.example.weatherapp.data.models.WeatherApiData
-import com.example.weatherapp.data.models.WeatherApiState
+import com.example.weatherapp.data.models.current_weather.WeatherApiData
+import com.example.weatherapp.data.models.current_weather.WeatherApiState
 
 @Composable
 fun SecondScreen(navController: NavHostController, cityName: String?, mainViewModel: MainViewModel = viewModel()) {
@@ -29,7 +29,7 @@ fun SecondScreen(navController: NavHostController, cityName: String?, mainViewMo
     } )
 
     SideEffect {
-        Log.e("TAG","$viewState")
+        Log.e("side", "$viewState")
     }
 
     Box(
@@ -97,17 +97,17 @@ fun WeatherLoaded(navController: NavHostController, data: WeatherApiData) {
 
     Button(
         onClick = {
-            navController.navigate(NavRoutes.ThirdScreen.route)
+            navController.navigate(NavRoutes.ThirdScreen.route+ "/${data.location.name}")
         },
         shape = RoundedCornerShape(5.dp)
     ) {
-        Text(text = "City list")
+        Text(text = "Get forecast")
     }
 }
 
 @Composable
 fun ErrorMessage(message: String, navController: NavHostController) {
-
+    Log.e("REQ_ERROR", message)
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

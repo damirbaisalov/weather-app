@@ -25,11 +25,10 @@ fun SecondScreen(navController: NavHostController, cityName: String?, mainViewMo
 
     LaunchedEffect(key1 = Unit, block = {
         mainViewModel.getCurrentWeather(cityName = cityName.toString())
-        Log.e("get", "API CALLED")
     } )
 
     SideEffect {
-        Log.e("side", "$viewState")
+        Log.e("side_current_weather", "$viewState")
     }
 
     Box(
@@ -107,7 +106,7 @@ fun WeatherLoaded(navController: NavHostController, data: WeatherApiData) {
 
 @Composable
 fun ErrorMessage(message: String, navController: NavHostController) {
-    Log.e("REQ_ERROR", message)
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

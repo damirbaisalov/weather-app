@@ -9,12 +9,12 @@ import com.example.weatherapp.presentation.screens.second_screen.SecondScreenVie
 
 class ThirdScreenViewModelFactory(context: Context): ViewModelProvider.Factory {
 
-    private val navHostController by lazy(LazyThreadSafetyMode.NONE) {
+    private val navController by lazy(LazyThreadSafetyMode.NONE) {
         NavHostController(context)
     }
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ThirdScreenViewModel(navHostController) as T
+        return ThirdScreenViewModel(navController) as T
     }
 
 }

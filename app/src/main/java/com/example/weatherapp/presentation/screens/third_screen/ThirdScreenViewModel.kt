@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ThirdScreenViewModel(
-    private val navHostController: NavHostController
+    private val navController: NavHostController
 ): ViewModel() {
 
     private val forecastWeatherRepository = ForecastWeatherRepositoryImpl()
@@ -34,13 +34,13 @@ class ThirdScreenViewModel(
             }
             is ThirdScreenIntent.ForecastWeatherClick -> {
                 Toast.makeText(
-                    navHostController.context,
+                    navController.context,
                     intent.weatherForecastData.toString(),
                     Toast.LENGTH_SHORT
                 ).show()
             }
             is ThirdScreenIntent.NavigateToFirstScreen -> {
-                navHostController.navigate(NavRoutes.FirstScreen.route)
+                navController.navigate(NavRoutes.FirstScreen.route)
             }
         }
     }

@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SecondScreenViewModel(
-    private val navHostController: NavHostController
+    private val navController: NavHostController
 ): ViewModel() {
 
     private val currentWeatherRepository = CurrentWeatherRepositoryImpl()
@@ -28,10 +28,10 @@ class SecondScreenViewModel(
                 getCurrentWeather(intent.cityName.toString())
             }
             is SecondScreenIntent.ForecastWeatherListClick -> {
-                navHostController.navigate(NavRoutes.ThirdScreen.route + "/${intent.cityName}")
+                navController.navigate(NavRoutes.ThirdScreen.route + "/${intent.cityName}")
             }
             is SecondScreenIntent.NavigateToPreviousScreen -> {
-                navHostController.popBackStack()
+                navController.popBackStack()
             }
         }
     }

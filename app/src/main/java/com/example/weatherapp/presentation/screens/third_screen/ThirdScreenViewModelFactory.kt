@@ -1,17 +1,20 @@
 package com.example.weatherapp.presentation.screens.third_screen
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavHostController
 import com.example.weatherapp.data.repository.ForecastWeatherRepositoryImpl
+import com.example.weatherapp.presentation.screens.second_screen.SecondScreenViewModel
 
-class ThirdScreenViewModelFactory: ViewModelProvider.Factory {
+class ThirdScreenViewModelFactory(context: Context): ViewModelProvider.Factory {
 
-    private val forecastWeatherRepository by lazy(LazyThreadSafetyMode.NONE) {
-        ForecastWeatherRepositoryImpl()
+    private val navHostController by lazy(LazyThreadSafetyMode.NONE) {
+        NavHostController(context)
     }
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return ThirdScreenViewModel(forecastWeatherRepository) as T
+        return ThirdScreenViewModel(navHostController) as T
     }
 
 }

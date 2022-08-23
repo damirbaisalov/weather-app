@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,22 +16,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.example.weatherapp.domain.models.WeatherForecastData
-import com.example.weatherapp.presentation.screens.second_screen.ErrorMessage
 
 @Composable
-fun ThirdScreen(navController: NavHostController, cityName: String?) {
+fun ThirdScreen(thirdScreenViewModel: ThirdScreenViewModel,cityName: String) {
 
-    val thirdScreenViewModel: ThirdScreenViewModel = viewModel(
-        factory = ThirdScreenViewModelFactory()
-    )
+//    val thirdScreenViewModel: ThirdScreenViewModel = viewModel(
+//        factory = ThirdScreenViewModelFactory(LocalContext.current)
+//    )
     val viewState = thirdScreenViewModel.weatherForeCastUiState.collectAsState()
 
     LaunchedEffect(key1 = Unit, block = {
-        thirdScreenViewModel.getForecastWeather(
-            cityName = cityName.toString(),
-            days = "7"
+        thirdScreenViewModel.getEvent(
+            ThirdScreenIntent.ForecastWeatherFetch(
+                cityName = cityName,
+                days = "7"
+            )
         )
 
         Log.e("launched_forecast", viewState.value.toString())
@@ -52,7 +53,7 @@ fun ThirdScreen(navController: NavHostController, cityName: String?) {
             is WeatherForecastUiState.Success -> ForecastLoaded(weatherForecastDataList = state.data)
             is WeatherForecastUiState.Error -> ErrorMessage(
                                                     message = state.msg,
-                                                    navController = navController
+                                                    thirdScreenViewModel = thirdScreenViewModel
                                                 )
         }
     }
@@ -101,6 +102,49 @@ fun ForecastLoaded(weatherForecastDataList: List<WeatherForecastData>) {
                         }
                     }
             }
+        }
+    }
+}
+
+@Composable
+fun ErrorMessage(
+    message: String,
+    thirdScreenViewModel: ThirdScreenViewModel
+) {
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(300.dp)
+                .padding(horizontal = 50.dp),
+            elevation = 4.dp,
+            shape = RoundedCornerShape(6.dp),
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = message,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Button(
+                    onClick = {
+                        thirdScreenViewModel.getEvent(
+                            intent = ThirdScreenIntent.NavigateToFirstScreen
+                        )
+                    }) {
+                    Text(text = "Refresh")
+                }
+            }
+
         }
     }
 }

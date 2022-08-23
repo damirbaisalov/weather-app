@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.weatherapp.presentation.NavRoutes
@@ -22,7 +23,7 @@ import com.example.weatherapp.R
 import com.example.weatherapp.presentation.screens.third_screen.showToast
 
 @Composable
-fun FirstScreen(navController: NavHostController) {
+fun FirstScreen(firstScreenViewModel: FirstScreenViewModel) {
 
     val context = LocalContext.current
     var cityName by remember { mutableStateOf("") }
@@ -57,7 +58,9 @@ fun FirstScreen(navController: NavHostController) {
             Button(
                 onClick = {
                     if (cityName.isNotBlank())
-                        navController.navigate(NavRoutes.SecondScreen.route + "/$cityName")
+                        firstScreenViewModel.getIntent(
+                            FirstScreenIntent.NavigateToSecondScreen(cityName = cityName)
+                        )
                     else
                        showToast(context = context, "Enter CityName")
                 },
@@ -91,6 +94,6 @@ fun CustomTextField(
 
 @Preview(showBackground = true)
 @Composable
-fun FirstScreenPreview() {
-    FirstScreen(navController = rememberNavController())
+fun FirstScreenPreview(firstScreenViewModel: FirstScreenViewModel = viewModel()) {
+    FirstScreen(firstScreenViewModel = firstScreenViewModel)
 }

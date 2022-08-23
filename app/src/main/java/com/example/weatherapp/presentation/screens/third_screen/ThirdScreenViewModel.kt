@@ -1,5 +1,6 @@
 package com.example.weatherapp.presentation.screens.third_screen
 
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
@@ -23,13 +24,20 @@ class ThirdScreenViewModel(
     )
     val weatherForeCastUiState: StateFlow<WeatherForecastUiState> = _weatherForecastUiState
 
-    fun getEvent(intent: ThirdScreenIntent) {
+    fun getIntent(intent: ThirdScreenIntent) {
         when(intent) {
             is ThirdScreenIntent.ForecastWeatherFetch -> {
                 getForecastWeather(
                     cityName = intent.cityName,
                     days = intent.days
                 )
+            }
+            is ThirdScreenIntent.ForecastWeatherClick -> {
+                Toast.makeText(
+                    navHostController.context,
+                    intent.weatherForecastData.toString(),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
             is ThirdScreenIntent.NavigateToFirstScreen -> {
                 navHostController.navigate(NavRoutes.FirstScreen.route)

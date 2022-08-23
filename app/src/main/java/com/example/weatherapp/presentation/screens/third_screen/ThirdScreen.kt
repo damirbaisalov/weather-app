@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherapp.domain.models.WeatherForecastData
 
 @Composable
@@ -27,7 +26,7 @@ fun ThirdScreen(thirdScreenViewModel: ThirdScreenViewModel,cityName: String) {
     val viewState = thirdScreenViewModel.weatherForeCastUiState.collectAsState()
 
     LaunchedEffect(key1 = Unit, block = {
-        thirdScreenViewModel.getEvent(
+        thirdScreenViewModel.getIntent(
             ThirdScreenIntent.ForecastWeatherFetch(
                 cityName = cityName,
                 days = "7"
@@ -50,7 +49,10 @@ fun ThirdScreen(thirdScreenViewModel: ThirdScreenViewModel,cityName: String) {
                 text = "Empty state occurred"
             )
             is WeatherForecastUiState.Loading -> Loading()
-            is WeatherForecastUiState.Success -> ForecastLoaded(weatherForecastDataList = state.data)
+            is WeatherForecastUiState.Success -> ForecastLoaded(
+                                                    weatherForecastDataList = state.data,
+                                                    thirdScreenViewModel = thirdScreenViewModel
+                                                )
             is WeatherForecastUiState.Error -> ErrorMessage(
                                                     message = state.msg,
                                                     thirdScreenViewModel = thirdScreenViewModel
@@ -61,9 +63,10 @@ fun ThirdScreen(thirdScreenViewModel: ThirdScreenViewModel,cityName: String) {
 }
 
 @Composable
-fun ForecastLoaded(weatherForecastDataList: List<WeatherForecastData>) {
-
-    val context = LocalContext.current
+fun ForecastLoaded(
+    weatherForecastDataList: List<WeatherForecastData>,
+    thirdScreenViewModel: ThirdScreenViewModel
+) {
 
     LazyColumn {
         for (weatherForecastData in weatherForecastDataList) {
@@ -75,7 +78,11 @@ fun ForecastLoaded(weatherForecastDataList: List<WeatherForecastData>) {
                             .padding(horizontal = 50.dp, vertical = 5.dp)
                             .fillMaxWidth()
                             .clickable {
-                                showToast(context, weatherForecastData.toString())
+                                thirdScreenViewModel.getIntent(
+                                    ThirdScreenIntent.ForecastWeatherClick(
+                                        weatherForecastData = weatherForecastData
+                                    )
+                                )
                             }
                     ) {
                         Row(
@@ -137,7 +144,7 @@ fun ErrorMessage(
 
                 Button(
                     onClick = {
-                        thirdScreenViewModel.getEvent(
+                        thirdScreenViewModel.getIntent(
                             intent = ThirdScreenIntent.NavigateToFirstScreen
                         )
                     }) {
@@ -158,8 +165,4 @@ fun Loading() {
     ) {
         CircularProgressIndicator()
     }
-}
-
-fun showToast(context: Context,  message: String ) {
-    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }

@@ -1,6 +1,7 @@
 package com.example.weatherapp.presentation.screens.first_screen
 
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.weatherapp.presentation.NavRoutes
 

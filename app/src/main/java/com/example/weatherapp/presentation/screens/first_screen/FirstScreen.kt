@@ -1,5 +1,7 @@
 package com.example.weatherapp.presentation.screens.first_screen
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,11 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.example.weatherapp.presentation.NavRoutes
 import com.example.weatherapp.R
-import com.example.weatherapp.presentation.screens.third_screen.showToast
 
 @Composable
 fun FirstScreen(firstScreenViewModel: FirstScreenViewModel) {
@@ -96,4 +94,8 @@ fun CustomTextField(
 @Composable
 fun FirstScreenPreview(firstScreenViewModel: FirstScreenViewModel = viewModel()) {
     FirstScreen(firstScreenViewModel = firstScreenViewModel)
+}
+
+fun showToast(context: Context, message: String ) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }

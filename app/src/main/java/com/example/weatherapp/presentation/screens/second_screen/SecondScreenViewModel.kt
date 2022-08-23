@@ -22,7 +22,7 @@ class SecondScreenViewModel(
     val weatherCurrentUiState: StateFlow<WeatherCurrentUiState> = _weatherCurrentUiState
 
 
-    fun getEvent(intent: SecondScreenIntent) {
+    fun getIntent(intent: SecondScreenIntent) {
         when(intent) {
             is SecondScreenIntent.CurrentWeatherFetch -> {
                 getCurrentWeather(intent.cityName.toString())

@@ -7,11 +7,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weatherapp.domain.models.WeatherCurrentData
 
 @Composable
@@ -24,7 +21,7 @@ fun SecondScreen(secondScreenViewModel: SecondScreenViewModel, cityName: String)
     val viewState = secondScreenViewModel.weatherCurrentUiState.collectAsState()
 
     LaunchedEffect(key1 = Unit, block = {
-        secondScreenViewModel.getEvent(
+        secondScreenViewModel.getIntent(
             intent = SecondScreenIntent.CurrentWeatherFetch(cityName)
         )
     })
@@ -101,7 +98,7 @@ fun WeatherLoaded(
 
     Button(
         onClick = {
-            secondScreenViewModel.getEvent(
+            secondScreenViewModel.getIntent(
                 intent = SecondScreenIntent.ForecastWeatherListClick(cityName = data.name)
             )
         },
@@ -142,7 +139,7 @@ fun ErrorMessage(
 
                 Button(
                     onClick = {
-                        secondScreenViewModel.getEvent(
+                        secondScreenViewModel.getIntent(
                             intent = SecondScreenIntent.NavigateToPreviousScreen
                         )
                 }) {

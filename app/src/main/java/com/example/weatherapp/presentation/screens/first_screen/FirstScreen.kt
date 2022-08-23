@@ -18,10 +18,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.weatherapp.R
 
 @Composable
-fun FirstScreen(firstScreenViewModel: FirstScreenViewModel) {
+fun FirstScreen(navController: NavHostController) {
+
+    val firstScreenViewModel: FirstScreenViewModel = viewModel(
+        factory = FirstScreenViewModelFactory(navController)
+    )
 
     val context = LocalContext.current
     var cityName by remember { mutableStateOf("") }
@@ -92,8 +98,8 @@ fun CustomTextField(
 
 @Preview(showBackground = true)
 @Composable
-fun FirstScreenPreview(firstScreenViewModel: FirstScreenViewModel = viewModel()) {
-    FirstScreen(firstScreenViewModel = firstScreenViewModel)
+fun FirstScreenPreview() {
+    FirstScreen(navController = rememberNavController())
 }
 
 fun showToast(context: Context, message: String ) {

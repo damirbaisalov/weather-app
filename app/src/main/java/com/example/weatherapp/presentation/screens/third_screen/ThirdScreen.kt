@@ -1,8 +1,6 @@
 package com.example.weatherapp.presentation.screens.third_screen
 
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,17 +10,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.weatherapp.domain.models.WeatherForecastData
 
 @Composable
-fun ThirdScreen(thirdScreenViewModel: ThirdScreenViewModel,cityName: String) {
+fun ThirdScreen(navHostController: NavHostController, cityName: String) {
 
-//    val thirdScreenViewModel: ThirdScreenViewModel = viewModel(
-//        factory = ThirdScreenViewModelFactory(LocalContext.current)
-//    )
+    val thirdScreenViewModel: ThirdScreenViewModel = viewModel(
+        factory = ThirdScreenViewModelFactory(navHostController)
+    )
     val viewState = thirdScreenViewModel.weatherForeCastUiState.collectAsState()
 
     LaunchedEffect(key1 = Unit, block = {

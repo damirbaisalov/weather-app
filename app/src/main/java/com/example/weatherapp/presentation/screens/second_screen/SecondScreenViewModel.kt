@@ -25,7 +25,7 @@ class SecondScreenViewModel(
     fun getIntent(intent: SecondScreenIntent) {
         when(intent) {
             is SecondScreenIntent.CurrentWeatherFetch -> {
-                getCurrentWeather(intent.cityName.toString())
+                getCurrentWeather(intent.cityName)
             }
             is SecondScreenIntent.ForecastWeatherListClick -> {
                 navController.navigate(NavRoutes.ThirdScreen.route + "/${intent.cityName}")

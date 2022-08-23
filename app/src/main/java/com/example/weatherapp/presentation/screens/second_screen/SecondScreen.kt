@@ -8,15 +8,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.weatherapp.domain.models.WeatherCurrentData
 
 @Composable
-fun SecondScreen(secondScreenViewModel: SecondScreenViewModel, cityName: String) {
+fun SecondScreen(navController: NavHostController, cityName: String) {
 
-//    val secondScreenViewModel: SecondScreenViewModel = viewModel(
-//        factory = SecondScreenViewModelFactory(LocalContext.current)
-//    )
+    val secondScreenViewModel: SecondScreenViewModel = viewModel(
+        factory = SecondScreenViewModelFactory(navController)
+    )
 
     val viewState = secondScreenViewModel.weatherCurrentUiState.collectAsState()
 
@@ -78,7 +82,6 @@ fun WeatherLoaded(
     Spacer(modifier = Modifier.size(10.dp))
 
     Row {
-
         Text(text = "Temp: ", style = MaterialTheme.typography.h6)
         Text(text = data.temp_c, style = MaterialTheme.typography.h6)
     }
@@ -151,8 +154,11 @@ fun ErrorMessage(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun SecondScreenPreview() {
-//    SecondScreen(cityName = "test")
-//}
+@Preview(showBackground = true)
+@Composable
+fun SecondScreenPreview() {
+    SecondScreen(
+        cityName = "test",
+        navController = rememberNavController()
+    )
+}

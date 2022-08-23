@@ -20,13 +20,16 @@ import com.example.weatherapp.domain.models.WeatherForecastData
 import com.example.weatherapp.presentation.screens.second_screen.ErrorMessage
 
 @Composable
-fun ThirdScreen(navController: NavHostController, cityName: String, thirdScreenViewModel: ThirdScreenViewModel = viewModel()) {
+fun ThirdScreen(navController: NavHostController, cityName: String?) {
 
+    val thirdScreenViewModel: ThirdScreenViewModel = viewModel(
+        factory = ThirdScreenViewModelFactory()
+    )
     val viewState = thirdScreenViewModel.weatherForeCastUiState.collectAsState()
 
     LaunchedEffect(key1 = Unit, block = {
         thirdScreenViewModel.getForecastWeather(
-            cityName = cityName,
+            cityName = cityName.toString(),
             days = "7"
         )
 

@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -18,7 +19,11 @@ import com.example.weatherapp.data.models.current_weather.WeatherApiData
 import com.example.weatherapp.domain.models.WeatherCurrentData
 
 @Composable
-fun SecondScreen(navController: NavHostController, cityName: String?, secondScreenViewModel: SecondScreenViewModel = viewModel()) {
+fun SecondScreen(navController: NavHostController, cityName: String?) {
+
+    val secondScreenViewModel: SecondScreenViewModel = viewModel(
+        factory = SecondScreenViewModelFactory()
+    )
 
     val viewState = secondScreenViewModel.weatherCurrentUiState.collectAsState()
 

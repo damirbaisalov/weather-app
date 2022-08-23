@@ -13,7 +13,7 @@ class ForecastWeatherRepositoryImpl: ForecastWeatherRepository {
         val weatherForecastApiData = ApiRetrofit.getApiClient().getForecastWeather(
             key = ApiRetrofit.API_KEY,
             cityName = weatherLocation.cityName,
-            days = weatherLocation.days.toString()
+            days = weatherLocation.days
         )
 
         return weatherForecastApiData.mapToDomain()

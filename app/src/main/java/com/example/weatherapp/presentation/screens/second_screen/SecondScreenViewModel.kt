@@ -26,7 +26,7 @@ class SecondScreenViewModel(
                 val weatherData = currentWeatherRepository.getCurrentWeather(
                     WeatherLocation(
                         cityName = cityName,
-                        null
+                        days = ""
                     )
                 )
                 _weatherCurrentUiState.value = WeatherCurrentUiState.Success(weatherData)

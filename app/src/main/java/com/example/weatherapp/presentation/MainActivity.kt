@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
             }
 
             composable(NavRoutes.ThirdScreen.route + "/{cityName}") { backStackEntry ->
-                val cityName = backStackEntry.arguments?.getString("cityName") ?: ""
+                val cityName = backStackEntry.arguments?.getString("cityName")
                 ThirdScreen(navController = navController, cityName = cityName)
             }
         }

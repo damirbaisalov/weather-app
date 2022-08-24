@@ -16,29 +16,45 @@ class SecondScreenViewModel(
     private val navController: NavHostController
 ): ViewModel() {
 
+//    private val store = Store(
+//        initialState = CurrentWeatherViewState(),
+//        reducer = CurrentWeatherReducer()
+//    )
     private val currentWeatherRepository = CurrentWeatherRepositoryImpl()
+    private val reducer = CurrentWeatherReducer()
 
-    private val _weatherCurrentUiState = MutableStateFlow<WeatherCurrentUiState>(WeatherCurrentUiState.Empty)
-    val weatherCurrentUiState: StateFlow<WeatherCurrentUiState> = _weatherCurrentUiState
+    private val _viewState =  MutableStateFlow(CurrentWeatherViewState())
+    val viewState: StateFlow<CurrentWeatherViewState> = _viewState
 
-
-    fun getIntent(intent: SecondScreenIntent) {
-        when(intent) {
-            is SecondScreenIntent.CurrentWeatherFetch -> {
-                getCurrentWeather(intent.cityName)
+    fun performAction(action: CurrentWeatherAction) {
+        when(action) {
+            is CurrentWeatherAction.CurrentWeatherLoading -> {
+                _viewState.value = reducer.reduce(_viewState.value, action)
             }
-            is SecondScreenIntent.ForecastWeatherListClick -> {
-                navController.navigate(NavRoutes.ThirdScreen.route + "/${intent.cityName}")
+            is CurrentWeatherAction.CurrentWeatherLoaded -> {
+                _viewState.value = reducer.reduce(_viewState.value, action)
             }
-            is SecondScreenIntent.NavigateToPreviousScreen -> {
+            is CurrentWeatherAction.CurrentWeatherFailed -> {
+                _viewState.value = reducer.reduce(_viewState.value, action)
+            }
+            is CurrentWeatherAction.CurrentWeatherCityNameChanged -> {
+                getCurrentWeather(cityName = action.cityName)
+            }
+            is CurrentWeatherAction.GetForecastButtonClicked -> {
+                navController.navigate(NavRoutes.ThirdScreen.route + "/${action.cityName}")
+            }
+            is CurrentWeatherAction.RefreshButtonClicked -> {
                 navController.popBackStack()
             }
         }
     }
 
-    private fun getCurrentWeather(cityName: String) = viewModelScope.launch {
+    fun getCurrentWeather(cityName: String) = viewModelScope.launch {
 
-        _weatherCurrentUiState.value = WeatherCurrentUiState.Loading
+        _viewState.value = reducer.reduce(
+            _viewState.value,
+            CurrentWeatherAction.CurrentWeatherLoading
+        )
 
         withContext(Dispatchers.IO) {
             try {
@@ -48,9 +64,17 @@ class SecondScreenViewModel(
                         days = ""
                     )
                 )
-                _weatherCurrentUiState.value = WeatherCurrentUiState.Success(weatherData)
+                _viewState.value = reducer.reduce(
+                    _viewState.value,
+                    CurrentWeatherAction.CurrentWeatherLoaded(
+                        newCurrentWeatherData = weatherData
+                    )
+                )
             } catch (e: Exception) {
-                _weatherCurrentUiState.value = WeatherCurrentUiState.Error(e.message.toString())
+                _viewState.value = reducer.reduce(
+                    _viewState.value,
+                    CurrentWeatherAction.CurrentWeatherFailed(e.localizedMessage)
+                )
             }
         }
     }

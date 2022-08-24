@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.weatherapp.domain.models.WeatherCurrentData
 
 @Composable
@@ -22,12 +23,13 @@ fun SecondScreen(navController: NavHostController, cityName: String) {
         factory = SecondScreenViewModelFactory(navController)
     )
 
-    val viewState = secondScreenViewModel.weatherCurrentUiState.collectAsState()
+    val viewState = secondScreenViewModel.viewState.collectAsState()
 
     LaunchedEffect(key1 = Unit, block = {
-        secondScreenViewModel.getIntent(
-            intent = SecondScreenIntent.CurrentWeatherFetch(cityName)
-        )
+
+        secondScreenViewModel.getCurrentWeather(cityName)
+
+        Log.e("LAUNCHED", "${viewState.value}")
     })
 
     SideEffect {
@@ -41,20 +43,22 @@ fun SecondScreen(navController: NavHostController, cityName: String) {
     ) {
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            when(val state = viewState.value) {
-                is WeatherCurrentUiState.Empty -> Text(
-                    text = "Empty state occurred"
-                )
-                is WeatherCurrentUiState.Loading ->
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                is WeatherCurrentUiState.Success -> WeatherLoaded(secondScreenViewModel = secondScreenViewModel,  state.data)
-                is WeatherCurrentUiState.Error -> ErrorMessage(message = state.msg, secondScreenViewModel = secondScreenViewModel)
+
+            if (viewState.value.showLoading) {
+                ShowProgressbar()
+            } else {
+                if (viewState.value.weatherCurrentData != null) {
+                    WeatherLoaded(
+                        secondScreenViewModel = secondScreenViewModel,
+                        data = viewState.value.weatherCurrentData!!
+                    )
+                } else {
+                    ErrorMessage(
+                        message = viewState.value.error!!,
+                        secondScreenViewModel = secondScreenViewModel
+                    )
+                }
+
             }
         }
     }
@@ -65,7 +69,8 @@ fun WeatherLoaded(
     secondScreenViewModel: SecondScreenViewModel,
     data: WeatherCurrentData
 ) {
-    var num by remember { mutableStateOf(1) }
+    val cityNameAlmaty = "Almaty"
+    val newCityName = "Pavlodar"
 
     Row {
         Text(text = "City: ", style = MaterialTheme.typography.h6)
@@ -88,21 +93,43 @@ fun WeatherLoaded(
 
     Spacer(modifier = Modifier.size(30.dp))
 
-    Button(
-        onClick = {
-            num++
-        },
-        shape = RoundedCornerShape(5.dp)
-    ) {
-        Text(text = "$num")
+    Row {
+
+        Button(
+            onClick = {
+                secondScreenViewModel.performAction(
+                    action = CurrentWeatherAction.CurrentWeatherCityNameChanged(
+                        cityName = cityNameAlmaty
+                    )
+                )
+            },
+            shape = RoundedCornerShape(5.dp)
+        ) {
+            Text(text = cityNameAlmaty)
+        }
+
+        Spacer(modifier = Modifier.padding(horizontal = 10.dp))
+
+        Button(
+            onClick = {
+                secondScreenViewModel.performAction(
+                    action = CurrentWeatherAction.CurrentWeatherCityNameChanged(
+                    cityName = newCityName
+                    )
+                )
+            },
+            shape = RoundedCornerShape(5.dp)
+        ) {
+            Text(text = newCityName)
+        }
     }
 
     Spacer(modifier = Modifier.size(10.dp))
 
     Button(
         onClick = {
-            secondScreenViewModel.getIntent(
-                intent = SecondScreenIntent.ForecastWeatherListClick(cityName = data.name)
+            secondScreenViewModel.performAction(
+                action = CurrentWeatherAction.GetForecastButtonClicked(cityName = data.name)
             )
         },
         shape = RoundedCornerShape(5.dp)
@@ -142,8 +169,8 @@ fun ErrorMessage(
 
                 Button(
                     onClick = {
-                        secondScreenViewModel.getIntent(
-                            intent = SecondScreenIntent.NavigateToPreviousScreen
+                        secondScreenViewModel.performAction(
+                            action = CurrentWeatherAction.RefreshButtonClicked
                         )
                 }) {
                     Text(text = "Refresh")
@@ -151,6 +178,17 @@ fun ErrorMessage(
             }
 
         }
+    }
+}
+
+@Composable
+fun ShowProgressbar() {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator()
     }
 }
 

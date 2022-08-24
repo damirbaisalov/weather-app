@@ -1,5 +1,7 @@
-package com.example.weatherapp.screens
+package com.example.weatherapp.presentation.screens.first_screen
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,13 +17,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.weatherapp.NavRoutes
 import com.example.weatherapp.R
 
 @Composable
 fun FirstScreen(navController: NavHostController) {
+
+    val firstScreenViewModel: FirstScreenViewModel = viewModel(
+        factory = FirstScreenViewModelFactory(navController)
+    )
 
     val context = LocalContext.current
     var cityName by remember { mutableStateOf("") }
@@ -56,7 +62,9 @@ fun FirstScreen(navController: NavHostController) {
             Button(
                 onClick = {
                     if (cityName.isNotBlank())
-                        navController.navigate(NavRoutes.SecondScreen.route + "/$cityName")
+                        firstScreenViewModel.getIntent(
+                            FirstScreenIntent.NavigateToSecondScreen(cityName = cityName)
+                        )
                     else
                        showToast(context = context, "Enter CityName")
                 },
@@ -92,4 +100,8 @@ fun CustomTextField(
 @Composable
 fun FirstScreenPreview() {
     FirstScreen(navController = rememberNavController())
+}
+
+fun showToast(context: Context, message: String ) {
+    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
